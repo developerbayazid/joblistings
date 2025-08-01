@@ -14,16 +14,12 @@ class JobController extends Controller
     {
         $jobs = Job::with('employer')->latest()->cursorPaginate(5);
 
-        return view('jobs.index', [
-            'jobs' => $jobs
-        ]);
+        return view('jobs.index', ['jobs' => $jobs]);
     }
 
     public function show( Job $job)
     {
-        return view('jobs.show', [
-            'job' => $job
-        ]);
+        return view('jobs.show', ['job' => $job]);
     }
 
     public function create()
@@ -50,13 +46,6 @@ class JobController extends Controller
     public function edit(Job $job)
     {
 
-        if (Auth::guest()) {
-            return redirect('/login');
-        }
-
-        Gate::authorize('edit-job', $job);
-
-
         return view('jobs.edit', ['job' => $job]);
     }
 
@@ -67,9 +56,6 @@ class JobController extends Controller
             'title'  => ['required', 'min: 3'],
             'salary' => ['required']
         ]);
-
-        //Authorize
-        Gate::authorize('edit-job', $job);
 
         // Update the job and persist
         $job->update([
@@ -83,8 +69,6 @@ class JobController extends Controller
 
     public function destroy(Job $job)
     {
-        Gate::authorize('edit-job', $job);
-
         $job->delete();
 
         return redirect('/jobs');
